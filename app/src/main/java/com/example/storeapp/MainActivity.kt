@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.colorResource
 import com.example.storeapp.screens.dashboard.DashboardScreen
+import com.example.storeapp.screens.results.ResultList
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
@@ -24,6 +25,7 @@ class MainActivity : ComponentActivity() {
 
 sealed class Screen{
     data object Dashboard : Screen()
+    data class Results(val id: String, val title: String): Screen()
 }
 
 @Composable
@@ -46,7 +48,19 @@ fun MainApp(){
 
     when (val screen = currentScreen){
         Screen.Dashboard -> {
-            DashboardScreen(onCategoryClick = {_,_ -> })
+            DashboardScreen(onCategoryClick = {id,title ->
+                backStack.add(Screen.Results(id, title))
+            })
+        }
+        is Screen.Results ->{
+            ResultList(
+                id = screen.id,
+                title = screen.title,
+                onBackClick = {
+                    popBackStack()
+                },
+                onStoreClick = { store -> }
+            )
         }
     }
 }
